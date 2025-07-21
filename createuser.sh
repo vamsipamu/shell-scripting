@@ -4,7 +4,7 @@ echo "this is user creation script with password creation by user automatically"
 echo
 #prompt for username & password
 read -p "enter new user name: " username
-read -p -s "create password for $username" : password
+read -p -s "create password for $username: "  password
 echo
 #creating the user
 useradd -m $username
