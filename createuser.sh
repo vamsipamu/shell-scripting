@@ -17,19 +17,27 @@ echo
 Create bulk users with group, directory and shell
 
 #!/bin/bash
+#Shebang: Tells the system to use the Bash shell to interpret the script
+# Path to the CSV file
+CSV_FILE="users.csv"
 
-INPUT_FILE="users.csv"
-LOG_FILE="/var/log/user_creation.log"
-touch "$LOG_FILE"
+# Skip the header and read each line IFS = internal field seperate by comma 
+#read -r: Reads the line without interpreting backslashes.
+#username password group shell: Variables to hold each field from the CSV line
 
-# Read each field from CSV
-while IFS=',' read -r username password group shell home; do
-    [[ -z "$username" || -z "$password" ]] && continue
+tail -n +2 "$CSV_FILE" | while IFS=',' read -r username password; do
+  echo "Creating user: $username"
 
-    if id "$username" &>/dev/null; then
-        echo "[$(date)] User '$username' already exists. Skipping." | tee -a "$LOG_FILE"
-        continue
-    fi
+  # Create the user
+  sudo useradd "$username"
+
+  # Set the password
+  echo "$username:$password" | sudo chpasswd
+
+  echo "User $username created and password set."
+done
+
+
 
     # Create user with group, shell, and home directory
     sudo useradd -m -d "$home" -s "$shell" -G "$group" "$username"
