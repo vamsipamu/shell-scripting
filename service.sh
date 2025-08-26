@@ -4,5 +4,5 @@ service=nginx
 if ! service is-active --quiet $service; then
 systemctl restart $service
 else
-echo "$service is active andrunning"
+echo "$service is active and running"
 fi
